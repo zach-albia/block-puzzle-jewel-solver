@@ -1,3 +1,5 @@
+package solver
+
 import scala.{Vector => X}
 
 object Common {

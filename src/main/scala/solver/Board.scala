@@ -1,3 +1,5 @@
+package solver
+
 import scala.{Vector => X}
 
 case class Board(blocks: X[X[Boolean]]) {

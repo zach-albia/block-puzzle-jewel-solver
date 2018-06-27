@@ -1,3 +1,5 @@
+package solver
+
 import scala.{Vector => X}
 
 case class Move(piece: Piece, spot: (Int, Int)) {

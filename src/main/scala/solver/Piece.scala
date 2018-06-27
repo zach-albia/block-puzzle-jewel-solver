@@ -1,3 +1,5 @@
+package solver
+
 import scala.{Vector => X}
 
 sealed abstract case class Piece private (blocks: X[(Int, Int)]) {
