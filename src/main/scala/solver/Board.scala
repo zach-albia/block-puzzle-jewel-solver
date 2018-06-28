@@ -2,7 +2,7 @@ package solver
 
 import scala.{Vector => X}
 
-case class Board(blocks: X[X[Boolean]]) {
+case class Board(blocks: Seq[Seq[Boolean]]) {
   def spots: Stream[(Int, Int)] = {
     val (rowSize, colSize) = size
     boardSpots(rowSize, colSize)
@@ -18,6 +18,22 @@ case class Board(blocks: X[X[Boolean]]) {
   lazy val blocksOccupied: Int =
     blocks.foldLeft(0)((count, row) => row.count(identity) + count)
 
+  lazy val closednessIndex: Int =
+    columnClosedness + rowClosedness
+
+  lazy val columnClosedness: Int =
+    segmentClosedness(column, size._2)
+
+  lazy val rowClosedness: Int =
+    segmentClosedness(row, size._1)
+
+  private def segmentClosedness(segmentByIndex: Int => Stream[Boolean], size: Int) =
+    (0 until size).toStream
+      .flatMap(i =>
+        segmentByIndex(i).zipWithIndex
+          .map({ case (occupied, j) => if (occupied) 0 else closednessWeights(j) + 1 })
+      ).sum
+
   def isOccupied(row: Int, column: Int): Boolean =
     blocks(row)(column)
 
@@ -31,12 +47,12 @@ case class Board(blocks: X[X[Boolean]]) {
   private def rowFormsLine(i: Int) =
     (i, row(i).forall(identity))
 
-  private def row(i: Int) = blocks(i)
+  private def row(i: Int) = blocks(i).toStream
 
   private def columnsFormLine(i: Int) =
     (i, column(i).forall(identity))
 
-  private def column(i: Int) = blocks.map(_(i))
+  private def column(i: Int) = blocks.map(_(i)).toStream
 
   def clearRows(indices: Set[Int]): Board =
     copy(indices.foldLeft(blocks)((blocks, i) => blocks.updated(i, X.fill(row(i).size)(false))))
@@ -44,15 +60,15 @@ case class Board(blocks: X[X[Boolean]]) {
   def clearColumns(indices: Set[Int]): Board =
     copy(indices.foldLeft(blocks)((blocks, i) => blocks.map(_.updated(i, false))))
 
-  def occupy(spot: (Int, Int)) = Board(
+  def occupy(spot: (Int, Int)): Board = Board(
     blocks.updated(spot._1, row(spot._1).updated(spot._2, true))
   )
 
   override def toString: String =
-    "\n" + blocks.map(_.map(Common.chars).mkString(" ")).mkString("\n") + "\n"
+    "\n" + blocks.map(_.map(chars).mkString(" ")).mkString("\n") + "\n"
 }
 
 object Board {
   def apply(size: (Int, Int)) = new Board(X.fill(size._1, size._2)(false))
-  val starting = apply(Common.boardSize)
+  val starting = apply(boardSize)
 }

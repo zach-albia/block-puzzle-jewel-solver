@@ -55,6 +55,24 @@ object Piece {
   //   *
   object VrtS4 extends Piece(X((0, 0), (1, 0), (1, 1), (2, 1)))
 
+  //   *
+  // * * *
+  object InvrT extends Piece(X((0, 1), (1, 0), (1, 1), (1, 2)))
+
+  //   *
+  // * *
+  //   *
+  object RghtT extends Piece(X((0, 1), (1, 0), (1, 1), (2, 1)))
+
+  // *
+  // * * *
+  object RLngL extends Piece(X((0, 0), (1, 0), (1, 1), (1, 2)))
+
+  //   *
+  //   *
+  // * *
+  object LTalL extends Piece(X((0, 1), (1, 1), (2, 0), (2, 1)))
+
   // * * * * *
   object Hori5 extends Piece(X((0, 0), (0, 1), (0, 2), (0, 3), (0, 4)))
 
@@ -62,6 +80,11 @@ object Piece {
   //     *
   //     *
   object HkRt5 extends Piece(X((0, 0), (0, 1), (0, 2), (1, 2), (2, 2)))
+
+  // * * *
+  // *
+  // *
+  object HkLt5 extends Piece(X((0, 0), (0, 1), (0, 2), (1, 0), (2, 0)))
 
   // * * *
   // * * *

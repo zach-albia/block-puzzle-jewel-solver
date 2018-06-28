@@ -2,8 +2,7 @@ package solver
 
 import scala.{Vector => X}
 
-case class Game(board: Board, hand: X[Piece]) {
-  import Common._
+case class Game(board: Board, hand: Vector[Piece]) {
 
   def move(piece: Piece, spot: (Int, Int)): Option[Game] =
     move(Move(piece, spot))
@@ -17,8 +16,8 @@ case class Game(board: Board, hand: X[Piece]) {
       withinBoard(row, column) && !board.isOccupied(row, column)})
 
   private def withinBoard(row: Int, column: Int) =
-    0 <= row && row <= board.blocks.size &&
-    0 <= column && column <= board.blocks(row).size
+    0 <= row && row < board.blocks.size &&
+    0 <= column && column < board.blocks(row).size
 
   private def doMove(move: Move): Option[Game] = Some(
     Game(
