@@ -27,11 +27,19 @@ object Piece {
 
   // * *
   // *
-  object HkLf3 extends Piece(X((0, 0), (0, 1), (1, 0)))
+  object HkRt3 extends Piece(X((0, 0), (0, 1), (1, 0)))
 
   // * *
   //   *
-  object HkRt3 extends Piece(X((0, 0), (0, 1), (1, 1)))
+  object HkLf3 extends Piece(X((0, 0), (0, 1), (1, 1)))
+
+  // *
+  // * *
+  object DnHkRt3 extends Piece(X((0, 0), (1, 0), (1, 1)))
+
+  //   *
+  // * *
+  object DnHkLf3 extends Piece(X((0, 1), (1, 0), (1, 1)))
 
   // * * * *
   object Hori4 extends Piece(X((0, 0), (0, 1), (0, 2), (0, 3)))
@@ -76,15 +84,32 @@ object Piece {
   // * * * * *
   object Hori5 extends Piece(X((0, 0), (0, 1), (0, 2), (0, 3), (0, 4)))
 
+  // *
+  // *
+  // *
+  // *
+  // *
+  object Vert5 extends Piece(X((0, 0), (1, 0), (2, 0), (3, 0), (4, 0)))
+
   // * * *
   //     *
   //     *
-  object HkRt5 extends Piece(X((0, 0), (0, 1), (0, 2), (1, 2), (2, 2)))
+  object HkLf5 extends Piece(X((0, 0), (0, 1), (0, 2), (1, 2), (2, 2)))
 
   // * * *
   // *
   // *
-  object HkLt5 extends Piece(X((0, 0), (0, 1), (0, 2), (1, 0), (2, 0)))
+  object HkRt5 extends Piece(X((0, 0), (0, 1), (0, 2), (1, 0), (2, 0)))
+
+  //     *
+  //     *
+  // * * *
+  object DnHkLf5 extends Piece(X((0, 2), (1, 2), (2, 0), (2, 1), (2, 2)))
+
+  // *
+  // *
+  // * * *
+  object DnHkRt5 extends Piece(X((0, 0), (1, 0), (2, 0), (2, 1), (2, 2)))
 
   // * * *
   // * * *

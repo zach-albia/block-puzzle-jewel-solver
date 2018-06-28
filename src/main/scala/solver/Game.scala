@@ -1,7 +1,5 @@
 package solver
 
-import scala.{Vector => X}
-
 case class Game(board: Board, hand: Vector[Piece]) {
 
   def move(piece: Piece, spot: (Int, Int)): Option[Game] =
@@ -30,6 +28,11 @@ case class Game(board: Board, hand: Vector[Piece]) {
     move.spots.foldLeft(board)((board, spot) => board.occupy(spot))
   }
 
-  def deal(hand: X[Piece]): Option[Game] =
-    if (this.hand.isEmpty) Some(this.copy(hand = hand)) else None
+  def deal(hand: Piece*): Option[Game] =
+    if (this.hand.isEmpty) Some(this.copy(hand = hand.toVector)) else None
+}
+
+object Game {
+  def starting(hand: Piece*): Game =
+    Game(Board.starting, hand.toVector)
 }

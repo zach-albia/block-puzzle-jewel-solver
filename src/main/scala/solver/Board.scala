@@ -2,7 +2,7 @@ package solver
 
 import scala.{Vector => X}
 
-case class Board(blocks: Seq[Seq[Boolean]]) {
+case class Board(blocks: Vector[Vector[Boolean]]) {
   def spots: Stream[(Int, Int)] = {
     val (rowSize, colSize) = size
     boardSpots(rowSize, colSize)
@@ -29,10 +29,14 @@ case class Board(blocks: Seq[Seq[Boolean]]) {
 
   private def segmentClosedness(segmentByIndex: Int => Stream[Boolean], size: Int) =
     (0 until size).toStream
-      .flatMap(i =>
-        segmentByIndex(i).zipWithIndex
-          .map({ case (occupied, j) => if (occupied) 0 else closednessWeights(j) + 1 })
-      ).sum
+      .map(segmentByIndex andThen score)
+      .sum
+
+  private def score(segment: Stream[Boolean]) = {
+    segment.zipWithIndex
+      .map({ case (occupied, j) => if (occupied) 1 + closednessWeights(j) else 0 })
+      .sum
+  }
 
   def isOccupied(row: Int, column: Int): Boolean =
     blocks(row)(column)
@@ -61,7 +65,7 @@ case class Board(blocks: Seq[Seq[Boolean]]) {
     copy(indices.foldLeft(blocks)((blocks, i) => blocks.map(_.updated(i, false))))
 
   def occupy(spot: (Int, Int)): Board = Board(
-    blocks.updated(spot._1, row(spot._1).updated(spot._2, true))
+    blocks.updated(spot._1, row(spot._1).updated(spot._2, true).toVector)
   )
 
   override def toString: String =
@@ -70,5 +74,6 @@ case class Board(blocks: Seq[Seq[Boolean]]) {
 
 object Board {
   def apply(size: (Int, Int)) = new Board(X.fill(size._1, size._2)(false))
+  def apply(blocks: Vector[Int]*) = new Board(blocks.toVector.map(_.map(_ != 0)))
   val starting = apply(boardSize)
 }
