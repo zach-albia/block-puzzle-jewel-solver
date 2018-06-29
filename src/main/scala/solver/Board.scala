@@ -29,14 +29,11 @@ case class Board(blocks: Vector[Vector[Boolean]]) {
 
   private def segmentClosedness(segmentByIndex: Int => Stream[Boolean], size: Int) =
     (0 until size).toStream
-      .map(segmentByIndex andThen score)
+      .map(i => score(segmentByIndex(i), i))
       .sum
 
-  private def score(segment: Stream[Boolean]) = {
-    segment.zipWithIndex
-      .map({ case (occupied, j) => if (occupied) 1 + closednessWeights(j) else 0 })
-      .sum
-  }
+  private def score(segment: Stream[Boolean], i: Int) =
+    segment.map(occupied => if (occupied) 1 + closednessWeights(i) else 0).sum
 
   def isOccupied(row: Int, column: Int): Boolean =
     blocks(row)(column)

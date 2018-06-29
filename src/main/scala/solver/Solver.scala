@@ -8,7 +8,7 @@ object Solver {
   def bestMoveSeq(gameState: Game): Option[LegalMoveSeq] =
     Stream(gameState.hand.permutations.toStream.distinct: _*).covary[IO]
       .map(allLegalMoveSeqs(gameState))
-      .join(Runtime.getRuntime.availableProcessors)
+      .join(Runtime.getRuntime.availableProcessors())
       .reduce(chooseBetterMove)
       .compile.toList.unsafeRunSync().headOption
 
@@ -27,8 +27,9 @@ object Solver {
       }
     }
 
-    allLegalMoves(startingState)(handPermutation).map(LegalMoveSeq(startingState, _))
-      .filter(_.moves.size == handPermutation.size)
+    allLegalMoves(startingState)(handPermutation)
+      .filter(_.size == handPermutation.size)
+      .map(LegalMoveSeq(startingState, _))
   }
 
   private def currentLegalMoves(gameState: Game, piece: Piece) =
