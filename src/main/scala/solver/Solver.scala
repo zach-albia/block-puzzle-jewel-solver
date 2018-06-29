@@ -13,13 +13,18 @@ object Solver {
   private def allLegalMoveSeqs(startingState: Game)(handPermutation: Vector[Piece]) = {
     def allLegalMoves(currentGameState: Game)(handPermutation: Vector[Piece]): Stream[Pure, List[Move]] =
       if (handPermutation.isEmpty) Stream(List.empty[Move])
-      else for {
-        move <- currentLegalMoves(currentGameState, handPermutation.head)
-        nextGameState = currentGameState.move(move).get
-        nextMoves <- allLegalMoves(nextGameState)(handPermutation.tail)
-      } yield move +: nextMoves
+      else {
+        val moves = currentLegalMoves(currentGameState, handPermutation.head)
+        if (moves.take(1).toList.isEmpty) Stream(List.empty[Move])
+        else for {
+          move <- moves
+          nextGameState = currentGameState.move(move).get
+          nextMoves <- allLegalMoves(nextGameState)(handPermutation.tail)
+        } yield move +: nextMoves
+      }
 
     allLegalMoves(startingState)(handPermutation).map(LegalMoveSeq(startingState, _))
+      .filter(_.moves.size == handPermutation.size)
   }
 
   private def currentLegalMoves(gameState: Game, piece: Piece) =
