@@ -1,0 +1,3 @@
+import scala.{Vector => X}
+import solver._; import Piece._
+implicit val concurrency = 4

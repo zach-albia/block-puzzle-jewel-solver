@@ -1,29 +1,36 @@
 package solver
 
-import fs2.Stream
 import cats.effect.IO
+import fs2.Stream
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Solver {
-  def bestMoveSeq(gameState: Game): Option[LegalMoveSeq] =
+  val emptyStream = Stream(List.empty[Move]).covary[IO]
+  private def i(): Int = Runtime.getRuntime.availableProcessors()
+
+  def bestMoveSeq(gameState: Game)
+                 (implicit concurrency: Int = i()): Option[LegalMoveSeq] =
     Stream(gameState.hand.permutations.toStream.distinct: _*).covary[IO]
-      .map(allLegalMoveSeqs(gameState))
-      .join(Runtime.getRuntime.availableProcessors())
+      .map(allLegalMoveSeqs(gameState, concurrency))
+      .join(concurrency)
       .reduce(chooseBetterMove)
       .compile.toList.unsafeRunSync().headOption
 
-  private def allLegalMoveSeqs(startingState: Game)(handPermutation: Vector[Piece]) = {
+  private def allLegalMoveSeqs(startingState: Game, concurrency: Int = i())
+                              (handPermutation: Vector[Piece]) = {
     def allLegalMoves(currentGameState: Game)(handPermutation: Vector[Piece]): Stream[IO, List[Move]] = {
-      val emptyStream = Stream(List.empty[Move]).covary[IO]
       if (handPermutation.isEmpty) emptyStream
       else {
         val moves = currentLegalMoves(currentGameState, handPermutation.head)
-        if (moves.head.compile.toList.unsafeRunSync().isEmpty) emptyStream
-        else for {
-          move <- moves
-          nextGameState = currentGameState.move(move).get
-          nextMoves <- allLegalMoves(nextGameState)(handPermutation.tail)
-        } yield move +: nextMoves
+        moves.head.last.map[Stream[IO, List[Move]]](firstElement =>
+          if (firstElement.isEmpty) emptyStream
+          else for {
+            move <- moves
+            nextGameState = currentGameState.move(move).get
+            nextMoves <- allLegalMoves(nextGameState)(handPermutation.tail)
+          } yield move +: nextMoves
+        ).join(concurrency)
       }
     }
 
