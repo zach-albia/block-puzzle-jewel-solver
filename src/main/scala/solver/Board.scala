@@ -71,6 +71,6 @@ case class Board(blocks: Vector[Vector[Boolean]]) {
 
 object Board {
   def apply(size: (Int, Int)) = new Board(X.fill(size._1, size._2)(false))
-  def apply(blocks: Vector[Int]*) = new Board(blocks.toVector.map(_.map(_ != 0)))
+  def apply(blocks: X[Int]*) = new Board(blocks.toVector.map(_.map(_ != 0)))
   val starting = apply(boardSize)
 }
