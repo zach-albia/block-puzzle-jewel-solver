@@ -5,19 +5,17 @@ import fs2.Stream
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Solver {
+case class FS2Solver(implicit concurrency: Int = Runtime.getRuntime.availableProcessors) extends SolverAlg {
   val emptyStream = Stream(List.empty[Move]).covary[IO]
-  private def i(): Int = Runtime.getRuntime.availableProcessors()
 
-  def bestMoveSeq(gameState: Game)
-                 (implicit concurrency: Int = i()): Option[LegalMoveSeq] =
+  def bestMoveSeq(gameState: Game): Option[LegalMoveSeq] =
     Stream(gameState.hand.permutations.toStream.distinct: _*).covary[IO]
-      .map(allLegalMoveSeqs(gameState, concurrency))
+      .map(allLegalMoveSeqs(gameState))
       .join(concurrency)
       .reduce(chooseBetterMove)
       .compile.toList.unsafeRunSync().headOption
 
-  private def allLegalMoveSeqs(startingState: Game, concurrency: Int = i())
+  private def allLegalMoveSeqs(startingState: Game)
                               (handPermutation: Vector[Piece]) = {
     def allLegalMoves(currentGameState: Game)(handPermutation: Vector[Piece]): Stream[IO, List[Move]] = {
       if (handPermutation.isEmpty) emptyStream
