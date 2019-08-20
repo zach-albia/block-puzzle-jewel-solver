@@ -5,7 +5,7 @@ import fs2.Stream
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-case class FS2Solver(implicit concurrency: Int = Runtime.getRuntime.availableProcessors) extends SolverAlg {
+case class FS2Solver(implicit concurrency: Int = Runtime.getRuntime.availableProcessors) extends Solver {
   val emptyStream = Stream(List.empty[Move]).covary[IO]
 
   def bestMoveSeq(gameState: Game): Option[LegalMoveSeq] =

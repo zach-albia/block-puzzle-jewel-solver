@@ -1,5 +1,5 @@
 package solver
 
-trait SolverAlg {
+trait Solver {
   def bestMoveSeq(gameState: Game): Option[LegalMoveSeq]
 }
