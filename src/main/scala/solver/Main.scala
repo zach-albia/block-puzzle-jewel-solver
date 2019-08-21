@@ -4,7 +4,7 @@ object Main {
   import Piece._
 
   def main(args: Array[String]): Unit = {
-    val solver = FS2Solver()(1)
+    val solver = ZIOSolver()(Runtime.getRuntime.availableProcessors)
     val t0 = System.nanoTime()
     val result = solver.bestMoveSeq(Game.starting(One, One, One))
     val t1 = System.nanoTime()
