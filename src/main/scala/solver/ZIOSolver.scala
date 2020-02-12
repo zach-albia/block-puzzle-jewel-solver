@@ -13,7 +13,7 @@ case class ZIOSolver(
     val permutations = gameState.hand.permutations
     runtime.unsafeRun(
       Stream
-        .fromIterable(permutations.toStream.distinct)
+        .fromIterable(permutations.toSet)
         .flatMapPar(concurrency)(allLegalMoveSeqs(gameState))
         .run(Sink.foldLeft(Option.empty[LegalMoveSeq])(
           (a: Option[LegalMoveSeq], b: LegalMoveSeq) => a match {
