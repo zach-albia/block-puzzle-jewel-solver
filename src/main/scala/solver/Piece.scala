@@ -7,8 +7,9 @@ sealed abstract case class Piece private (blocks: X[(Int, Int)]) {
 }
 
 object Piece {
+
   // *
-  object One   extends Piece(X((0, 0)))
+  object One extends Piece(X((0, 0)))
 
   // *
   // *
@@ -52,7 +53,7 @@ object Piece {
 
   // * *
   // * *
-  object Box4  extends Piece(X((0, 0), (0, 1), (1, 0), (1, 1)))
+  object Box4 extends Piece(X((0, 0), (0, 1), (1, 0), (1, 1)))
 
   //   * *
   // * *
@@ -114,5 +115,16 @@ object Piece {
   // * * *
   // * * *
   // * * *
-  object Box9  extends Piece(X((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)))
+  object Box9
+      extends Piece(
+        X((0, 0),
+          (0, 1),
+          (0, 2),
+          (1, 0),
+          (1, 1),
+          (1, 2),
+          (2, 0),
+          (2, 1),
+          (2, 2))
+      )
 }
