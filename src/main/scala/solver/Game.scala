@@ -10,12 +10,14 @@ case class Game(board: Board, hand: Vector[Piece]) {
 
   def isLegal(move: Move): Boolean =
     hand.contains(move.piece) &&
-    move.spots.forall({ case (row, column) =>
-      withinBoard(row, column) && !board.isOccupied(row, column)})
+      move.spots.forall({
+        case (row, column) =>
+          withinBoard(row, column) && !board.isOccupied(row, column)
+      })
 
   private def withinBoard(row: Int, column: Int) =
     0 <= row && row < board.blocks.size &&
-    0 <= column && column < board.blocks(row).size
+      0 <= column && column < board.blocks(row).size
 
   private def doMove(move: Move): Option[Game] = Some(
     Game(
@@ -24,9 +26,8 @@ case class Game(board: Board, hand: Vector[Piece]) {
     )
   )
 
-  private def occupy(move: Move) = {
+  private def occupy(move: Move) =
     move.spots.foldLeft(board)((board, spot) => board.occupy(spot))
-  }
 
   def deal(hand: Piece*): Option[Game] =
     if (this.hand.isEmpty) Some(this.copy(hand = hand.toVector)) else None

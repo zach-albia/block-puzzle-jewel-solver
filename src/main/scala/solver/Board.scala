@@ -1,6 +1,6 @@
 package solver
 
-import scala.{Vector => X}
+import scala.{ Vector => X }
 
 case class Board(blocks: Vector[Vector[Boolean]]) {
   def spots: Stream[(Int, Int)] = {
@@ -8,10 +8,11 @@ case class Board(blocks: Vector[Vector[Boolean]]) {
     boardSpots(rowSize, colSize)
   }
 
-  private def boardSpots(rowSize: Int, columnSize: Int) = for {
-    row <- (0 until rowSize).toStream
-    col <- (0 until columnSize).toStream
-  } yield (row, col)
+  private def boardSpots(rowSize: Int, columnSize: Int) =
+    for {
+      row <- (0 until rowSize).toStream
+      col <- (0 until columnSize).toStream
+    } yield (row, col)
 
   val size: (Int, Int) = (blocks.size, blocks.head.size)
 
@@ -39,10 +40,11 @@ case class Board(blocks: Vector[Vector[Boolean]]) {
     blocks(row)(column)
 
   def clear(lastMove: Move): Board = {
-    val rows = lastMove.rows.map(rowFormsLine)
+    val rows    = lastMove.rows.map(rowFormsLine)
     val columns = lastMove.columns.map(columnsFormLine)
-    this.clearRows(rows.filter(_._2).map(_._1))
-        .clearColumns(columns.filter(_._2).map(_._1))
+    this
+      .clearRows(rows.filter(_._2).map(_._1))
+      .clearColumns(columns.filter(_._2).map(_._1))
   }
 
   private def rowFormsLine(i: Int) =
@@ -71,6 +73,6 @@ case class Board(blocks: Vector[Vector[Boolean]]) {
 
 object Board {
   def apply(size: (Int, Int)) = new Board(X.fill(size._1, size._2)(false))
-  def apply(blocks: X[Int]*) = new Board(blocks.toVector.map(_.map(_ != 0)))
-  val starting = apply(boardSize)
+  def apply(blocks: X[Int]*)  = new Board(blocks.toVector.map(_.map(_ != 0)))
+  val starting                = apply(boardSize)
 }

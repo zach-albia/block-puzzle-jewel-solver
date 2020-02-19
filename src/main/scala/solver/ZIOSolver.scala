@@ -1,26 +1,22 @@
 package solver
 
-import zio.DefaultRuntime
+import zio.ZIO
 import zio.stream._
 
-case class ZIOSolver(
-    implicit concurrency: Int = Runtime.getRuntime.availableProcessors)
-    extends Solver {
+object ZIOSolver {
 
-  private val runtime = new DefaultRuntime {}
-
-  override def bestMoveSeq(gameState: Game): Option[LegalMoveSeq] = {
-    val permutations = gameState.hand.permutations
-    runtime.unsafeRun(
-      Stream
-        .fromIterable(permutations.toSet)
-        .flatMapPar(concurrency)(allLegalMoveSeqs(gameState))
-        .run(Sink.foldLeft(Option.empty[LegalMoveSeq])(
-          (a: Option[LegalMoveSeq], b: LegalMoveSeq) => a match {
-            case None => Some(b)
-            case Some(s) => Some(chooseBetterMoveSeq(s, b))
-          }))
-    )
+  def bestMoveSeq(gameState: Game): ZIO[Any, Nothing, Option[LegalMoveSeq]] = {
+      for {
+        concurrency <- ZIO.effectTotal(Runtime.getRuntime.availableProcessors)
+        result <- Stream
+          .fromIterable(gameState.hand.permutations.toSet)
+          .flatMapPar(concurrency)(allLegalMoveSeqs(gameState))
+          .run(Sink.foldLeft(Option.empty[LegalMoveSeq])(
+            (a: Option[LegalMoveSeq], b: LegalMoveSeq) => a match {
+              case None => Some(b)
+              case Some(s) => Some(chooseBetterMoveSeq(s, b))
+            }))
+      } yield result
   }
 
   def allLegalMoveSeqs(startingState: Game)(handPermutation: Vector[Piece]) = {
